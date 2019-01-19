@@ -64,6 +64,56 @@ public class MainActivity extends AppCompatActivity {
 
             String mes= "";
             //Map<String,Object> tempz = new HashMap<>();
+            try {
+                Document webPage;
+                String [] temps = {"","","","","","","","","","","","","","","","",""};
+
+                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c04m139e01").get();
+                temps[0] = cutBeforeData(webPage.getElementById("prec").text());
+
+                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c04m055e02").get();
+                temps[1] = cutBeforeData(webPage.getElementById("prec").text());
+
+                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c04m001e02").get();
+                temps[2] = cutBeforeData(webPage.getElementById("prec").text());
+
+                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c02m129e02").get();
+                temps[3] = cutBeforeData(webPage.getElementById("prec").text());
+
+                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c99m044e15").get();
+                temps[4] = cutBeforeData(webPage.getElementById("prec").text());
+
+                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c08m131e01").get();
+                temps[5] = cutBeforeData(webPage.getElementById("prec").text());
+
+                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c06m084e02").get();
+                temps[6] = cutBeforeData(webPage.getElementById("prec").text());
+
+                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c99m044e01").get();
+                temps[7] = cutBeforeData(webPage.getElementById("prec").text());
+
+                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c07m115e01").get();
+                temps[8] = cutBeforeData(webPage.getElementById("prec").text());
+
+                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c09m201e01").get();
+                temps[9] = cutBeforeData(webPage.getElementById("prec").text());
+
+                webPage = Jsoup.connect("http://www.aemet.es/es/eltiempo/observacion/ultimosdatos?k=arn&l=8486X&w=1&datos=img").get();
+                temps[10] = (String) webPage.getElementsByClass("fila_impar").get(4).text();
+
+                webPage = Jsoup.connect("http://www.aemet.es/es/eltiempo/observacion/ultimosdatos?k=val&l=8472A&w=1&datos=img&f=tmax").get();
+                temps[11] = (String) webPage.getElementsByClass("fila_impar").get(4).text();
+
+                webPage = Jsoup.connect("https://meteosabi.es/el-tiempo-en-bronchales-teruel").get();
+                temps[12] = cutBeforeData(webPage.getElementById("RainToday").text());
+
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
 
             DocumentReference docRef = db.collection("Temperaturas").document("Estaciones");
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -72,11 +122,13 @@ public class MainActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            Log.d(TAG, "xyz DOCSNAPSHOT data: " + document.getData());
+                            Log.d(TAG, "xyz: BASE_DE_DATOS_ENCONTRADA data: " + document.getData());
 
-                            String mes = new SimpleDateFormat("dd-MM-yyyy").format(new Date()).split("-")[1];
+                            int mes = Integer.parseInt(new SimpleDateFormat("dd-MM-yyyy").format(new Date()).split("-")[1]);
 
                             Map<String,Object> tempz = document.getData();
+
+
                             Map<String,String> stations = new HashMap<>();
 
                             stations.put("E0","https://www.avamet.org/mxo_i.php?id=c04m139e01"); //Vistabella
@@ -95,16 +147,15 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                            Document webPage;
-                            String [] temps = {"","","","","","","","","","","","","","","","",""};
 
-                            try {
-                                Log.d(TAG, "xyz PROOF data: " + "HOLAaa");
 
-                                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c04m139e01").get();
-                                temps[0] = cutBeforeData(webPage.getElementById("prec").text());
-                                Log.d(TAG, "xyz PROOF data: " + "ADIOssaa");
+                            Log.d(TAG, "xyz PROOF data: " + "HOLAaa");
 
+
+                                 /*
+
+
+                                */
 /*
                                 webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c04m055e02").get();
                                 temps[1] = cutBeforeData(webPage.getElementById("prec").text());
@@ -138,10 +189,6 @@ public class MainActivity extends AppCompatActivity {
 
                                 Log.d(TAG, "xyz PROOF data: " + temps[10]);
 */
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
 
 
                             Log.d(TAG, "DATOS_E0: " + tempz.get("E0").toString());
