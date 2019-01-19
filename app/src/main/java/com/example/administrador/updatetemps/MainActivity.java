@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 webPage = Jsoup.connect("https://meteosabi.es/el-tiempo-en-bronchales-teruel").get();
                 rains[12] = formatTemps(webPage.getElementById("RainToday").text());
 
-                Log.d(TAG, "xyz_vect RAINS MODIFIIED: : "+Arrays.toString(rains));
+                //Log.d(TAG, "xyz_vect RAINS MODIFIIED: : "+Arrays.toString(rains));
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -121,29 +121,35 @@ public class MainActivity extends AppCompatActivity {
                         if (document.exists()) {
                             Log.d(TAG, "xyz: BASE_DE_DATOS_ENCONTRADA data: " + document.getData());
 
-                            Map<String,Object> tempz = document.getData();
+                            Map<String, Object> tempz = document.getData();
                             ArrayList<Double> ad = null;
-                            Log.d(TAG,"xyz_AQUI LLEGA");
+                            //Log.d(TAG,"xyz_AQUI LLEGA");
 
 
-                            Log.d(TAG, "xyz_vect RAINS??: "+Arrays.toString(rains));
+                            Log.d(TAG, "xyz_vect RAINS: " + Arrays.toString(rains));
 
 
                             //MISTERIO DE LOS GORDOS
-                            for (int i = 0; i<rains.length; i++){
-                                Log.d("xyzRRR: "+TAG,Double.toString(rains[i]));
-                                /*
-                                if(rains[i] > 0.0 ){
+                            //for (Double d : rains){
+                            //  Log.d(TAG,"xyz_R: "+d.toString());
+                            //}
 
+                            for (int i = 0; i < rains.length; i++) {
+                                if(rains[i] > 0.0 ){
+                                    Log.d(TAG, "xyzRAIN: " + Integer.toString(i) + " - " + rains[i].toString());
                                     ad =(ArrayList<Double>) tempz.get("E"+Integer.toString(i));
-                                    Double suma = ad.get(mes)+rains[i];
+                                    Log.d(TAG,"xyz_QUE DISE #"+(ad.get(mes)+rains[i])+"#");
+                                    //double suma = ad.get(mes) ;
+                                    Log.d(TAG,"xyz_QUE DISE??");
+                                    //ad.set(mes, suma);
+                                    Log.d(TAG,"xyz_ARRAY ACTUALISADO");
+                            }
+                                /*
                                     Log.d(TAG,"xyzSUMA: "+Double.toString(suma));
                                     ad.set(mes, suma);
-                                    Log.d(TAG,"xyz_ARRAY ACTUALISADO");
-                                }
                                 */
                             }
-                            Log.d(TAG, "xyzSALE_DEL_FOR: "+ad.toString());
+                            Log.d(TAG, "xyzSALE_DEL_FOR");
 
                            // ad.set(mes, ad.get(mes) + rains[0] );
 
