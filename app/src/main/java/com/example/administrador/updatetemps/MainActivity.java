@@ -19,15 +19,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 import java.io.IOException;
-import java.security.Key;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -62,52 +59,52 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            String mes= "";
-            //Map<String,Object> tempz = new HashMap<>();
+            final int mes= Integer.parseInt(new SimpleDateFormat("dd-MM-yyyy").format(new Date()).split("-")[1]);;
+            final Double [] rains = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+            Map<String,Object> tempz = new HashMap<>();
             try {
                 Document webPage;
-                String [] temps = {"","","","","","","","","","","","","","","","",""};
 
                 webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c04m139e01").get();
-                temps[0] = cutBeforeData(webPage.getElementById("prec").text());
+                rains[0] = formatTemps(webPage.getElementById("prec").text());
 
                 webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c04m055e02").get();
-                temps[1] = cutBeforeData(webPage.getElementById("prec").text());
+                rains[1] = formatTemps(webPage.getElementById("prec").text());
 
                 webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c04m001e02").get();
-                temps[2] = cutBeforeData(webPage.getElementById("prec").text());
+                rains[2] = formatTemps(webPage.getElementById("prec").text());
 
                 webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c02m129e02").get();
-                temps[3] = cutBeforeData(webPage.getElementById("prec").text());
+                rains[3] = formatTemps(webPage.getElementById("prec").text());
 
                 webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c99m044e15").get();
-                temps[4] = cutBeforeData(webPage.getElementById("prec").text());
+                rains[4] = formatTemps(webPage.getElementById("prec").text());
 
                 webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c08m131e01").get();
-                temps[5] = cutBeforeData(webPage.getElementById("prec").text());
+                rains[5] = formatTemps(webPage.getElementById("prec").text());
 
                 webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c06m084e02").get();
-                temps[6] = cutBeforeData(webPage.getElementById("prec").text());
+                rains[6] = formatTemps(webPage.getElementById("prec").text());
 
                 webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c99m044e01").get();
-                temps[7] = cutBeforeData(webPage.getElementById("prec").text());
+                rains[7] = formatTemps(webPage.getElementById("prec").text());
 
                 webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c07m115e01").get();
-                temps[8] = cutBeforeData(webPage.getElementById("prec").text());
+                rains[8] = formatTemps(webPage.getElementById("prec").text());
 
                 webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c09m201e01").get();
-                temps[9] = cutBeforeData(webPage.getElementById("prec").text());
+                rains[9] = formatTemps(webPage.getElementById("prec").text());
 
                 webPage = Jsoup.connect("http://www.aemet.es/es/eltiempo/observacion/ultimosdatos?k=arn&l=8486X&w=1&datos=img").get();
-                temps[10] = (String) webPage.getElementsByClass("fila_impar").get(4).text();
+                rains[10] = formatTemps(webPage.getElementsByClass("fila_impar").get(4).text());
 
                 webPage = Jsoup.connect("http://www.aemet.es/es/eltiempo/observacion/ultimosdatos?k=val&l=8472A&w=1&datos=img&f=tmax").get();
-                temps[11] = (String) webPage.getElementsByClass("fila_impar").get(4).text();
+                rains[11] = formatTemps( webPage.getElementsByClass("fila_impar").get(4).text());
 
                 webPage = Jsoup.connect("https://meteosabi.es/el-tiempo-en-bronchales-teruel").get();
-                temps[12] = cutBeforeData(webPage.getElementById("RainToday").text());
+                rains[12] = formatTemps(webPage.getElementById("RainToday").text());
 
-
+                Log.d(TAG, "xyz_vect RAINS MODIFIIED: : "+Arrays.toString(rains));
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -124,108 +121,42 @@ public class MainActivity extends AppCompatActivity {
                         if (document.exists()) {
                             Log.d(TAG, "xyz: BASE_DE_DATOS_ENCONTRADA data: " + document.getData());
 
-                            int mes = Integer.parseInt(new SimpleDateFormat("dd-MM-yyyy").format(new Date()).split("-")[1]);
-
                             Map<String,Object> tempz = document.getData();
+                            ArrayList<Double> ad = null;
+                            Log.d(TAG,"xyz_AQUI LLEGA");
 
 
-                            Map<String,String> stations = new HashMap<>();
-
-                            stations.put("E0","https://www.avamet.org/mxo_i.php?id=c04m139e01"); //Vistabella
-                            stations.put("E1","https://www.avamet.org/mxo_i.php?id=c04m055e02"); //Xodos
-                            stations.put("E2","https://www.avamet.org/mxo_i.php?id=c04m001e02"); //Atzaneta
-                            stations.put("E3","https://www.avamet.org/mxo_i.php?id=c02m129e02"); //Villafranca
-                            stations.put("E4","https://www.avamet.org/mxo_i.php?id=c99m044e15"); //Valdelinares
-                            stations.put("E5","https://www.avamet.org/mxo_i.php?id=c08m131e01"); //Villamalur
-                            stations.put("E6","https://www.avamet.org/mxo_i.php?id=c06m084e02"); //Onda
-                            stations.put("E7","https://www.avamet.org/mxo_i.php?id=c99m044e01"); //Alcalá S.
-                            stations.put("E8","https://www.avamet.org/mxo_i.php?id=c07m115e01"); //Toro
-                            stations.put("E9","https://www.avamet.org/mxo_i.php?id=c09m201e01"); //Puebla S.M.
-                            stations.put("E10","http://www.aemet.es/es/eltiempo/observacion/ultimosdatos?k=arn&l=8486X&w=1&datos=img");//Mosqueruela
-                            stations.put("E11","http://www.aemet.es/es/eltiempo/observacion/ultimosdatos?k=val&l=8472A&w=1&datos=img&f=tmax");//Montanejos
-                            stations.put("E12","https://meteosabi.es/el-tiempo-en-bronchales-teruel");//Bronchales
+                            Log.d(TAG, "xyz_vect RAINS??: "+Arrays.toString(rains));
 
 
+                            //MISTERIO DE LOS GORDOS
+                            for (int i = 0; i<rains.length; i++){
+                                Log.d("xyzRRR: "+TAG,Double.toString(rains[i]));
+                                /*
+                                if(rains[i] > 0.0 ){
 
-
-
-                            Log.d(TAG, "xyz PROOF data: " + "HOLAaa");
-
-
-                                 /*
-
-
+                                    ad =(ArrayList<Double>) tempz.get("E"+Integer.toString(i));
+                                    Double suma = ad.get(mes)+rains[i];
+                                    Log.d(TAG,"xyzSUMA: "+Double.toString(suma));
+                                    ad.set(mes, suma);
+                                    Log.d(TAG,"xyz_ARRAY ACTUALISADO");
+                                }
                                 */
-/*
-                                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c04m055e02").get();
-                                temps[1] = cutBeforeData(webPage.getElementById("prec").text());
+                            }
+                            Log.d(TAG, "xyzSALE_DEL_FOR: "+ad.toString());
 
-                                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c04m001e02").get();
-                                temps[2] = webPage.getElementById("prec").text();
+                           // ad.set(mes, ad.get(mes) + rains[0] );
 
-                                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c02m129e02").get();
-                                temps[3] = webPage.getElementById("prec").text();
-
-                                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c99m044e15").get();
-                                temps[4] = webPage.getElementById("prec").text();
-
-                                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c08m131e01").get();
-                                temps[5] = webPage.getElementById("prec").text();
-
-                                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c06m084e02").get();
-                                temps[6] = webPage.getElementById("prec").text();
-
-                                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c99m044e01").get();
-                                temps[7] = webPage.getElementById("prec").text();
-
-                                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c07m115e01").get();
-                                temps[8] = webPage.getElementById("prec").text();
-
-                                webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c09m201e01").get();
-                                temps[9] = webPage.getElementById("prec").text();
-
-                                webPage = Jsoup.connect("http://www.aemet.es/es/eltiempo/observacion/ultimosdatos?k=arn&l=8486X&w=1&datos=img").get();
-                                temps[10] = webPage.getElementsByClass("fila_impar").get(6).text();
-
-                                Log.d(TAG, "xyz PROOF data: " + temps[10]);
-*/
-
-
-                            Log.d(TAG, "DATOS_E0: " + tempz.get("E0").toString());
 
                         } else {
-                            Log.d(TAG, "xyz No SUCH DOCUMENT");
+                            Log.d(TAG, "xyz No ENCUENTRA LA BBDD");
                         }
                     } else {
-                        Log.d(TAG, "xyz GET FAILED WITH DATA ", task.getException());
+                        Log.d(TAG, "xyz ERROR DE DATOS ", task.getException());
                     }
                 }
             });
-                /*
-                DocumentReference docRef = db.collection("Temperaturas").document("Estaciones");
 
-                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        tempz = documentSnapshot.toObject(HashMap.class);
-                    }
-                });
-
-                /*
-                db.collection("Temperaturas").document("Estaciones").set(tempz)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Toast.makeText(MainActivity.this, "ARRAY GUARDADO", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(MainActivity.this, "Error GUARDANDO!", Toast.LENGTH_SHORT).show();
-                                Log.d(TAG, e.toString());
-                            }
-                        });*/
 
             return null;
         }
@@ -256,7 +187,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public String cutBeforeData(String orgData){
+    public Double formatTemps(String orgData){
+        Double result;
         int idx = 0;
         for (int i=0;i<orgData.length();i++){
             if (Character.isDigit(orgData.charAt(i))) {
@@ -266,9 +198,26 @@ public class MainActivity extends AppCompatActivity {
         }
         // Contemplar temperaturas negativas
         if (idx != 0 && orgData.charAt(idx-1) == '-'){
-            return orgData.substring(idx-1,orgData.length()-2);
+            //Log.d(TAG,"xyZNEGA: "+orgData.substring(idx-1,orgData.length()-2));
+
+            try{
+                result = Double.parseDouble(orgData.substring(idx-1,orgData.length()-2).replace(',','.'));
+            }catch( NumberFormatException e){
+                //Log.d("xyz_TRY/CATCH_NEGA: "+TAG, orgData.substring(idx-1,orgData.length()-2).replace(',','.') );
+                return 0.0;
+            }
+            return result;
         }
-        return orgData.substring(idx,orgData.length()-2);
+
+        //TEMPERATURAS POSITIVAS
+        //Log.d("xyZPOSI: "+TAG,orgData.substring(idx,orgData.length()-2));
+        try{
+            result = Double.parseDouble(orgData.substring(idx,orgData.length()-2).replace(',','.'));
+        }catch( NumberFormatException e){
+            //Log.d("xyz_TRY/CATCH_POSI: "+TAG, orgData.substring(idx,orgData.length()-2).replace(',','.') );
+            return 0.0;
+        }
+        return result;
     }
 
 
