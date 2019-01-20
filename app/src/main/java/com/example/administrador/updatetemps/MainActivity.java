@@ -33,16 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    private static final String KEY_TITLE = "title";
-    private static final String KEY_DESCRIPTION = "description";
-    private static final String ARR = "array";
-
-    private EditText editTextTitle;
-    private EditText editTextDescription;
-
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,17 +46,24 @@ public class MainActivity extends AppCompatActivity {
 
     public class doit extends AsyncTask<Void,Void,Void> {
 
-
         @Override
         protected Void doInBackground(Void... voids) {
 
-            final int mes= Integer.parseInt(new SimpleDateFormat("dd-MM-yyyy").format(new Date()).split("-")[1]) -1;;
+            final int mes= Integer.parseInt(new SimpleDateFormat("dd-MM-yyyy").format(new Date()).split("-")[1]) -1;
+            final int dia = Integer.parseInt(new SimpleDateFormat("dd-MM-yyyy").format(new Date()).split("-")[0]);
+
             final Double [] rains = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
             Map<String,Object> tempz = new HashMap<>();
 
+            Log.d(TAG, "xyz_FECHA: " + "MES: "+mes+" DIA: "+dia);
+
+            if (mes==11 && dia==31){
+                resetDB();
+            }
+
             fillVectRains(rains);
 
-            DocumentReference docRef = db.collection("Temperaturas").document("Estaciones");
+            DocumentReference docRef = db.collection("Lluvias").document("Estaciones");
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -84,11 +82,9 @@ public class MainActivity extends AppCompatActivity {
 
                                 if(rains[i] > 0.0 ){
 
-                                    Log.d(TAG, "xyz i position: "+Integer.toString(i) + " - Rain value: " + rains[i].toString());
+                                    Log.d(TAG, "xyz i-Var: "+Integer.toString(i) + " - Rain Value: " + rains[i].toString());
 
                                     ad =(ArrayList<Double>) tempz.get("E"+Integer.toString(i));
-
-                                    //Log.d(TAG, "xyzVECT STRING: "+ad.toString());
 
                                     ad.set(mes,ad.get(mes)+rains[i]);
 
@@ -96,19 +92,11 @@ public class MainActivity extends AppCompatActivity {
                                             .update(
                                                     "E"+Integer.toString(i), ad
                                             );
-                                    //ad =(ArrayList<Double>) tempz.get("E"+Integer.toString(i));
-                                    //Log.d(TAG,"xyzCLASS TYPE: "+ad.get(0).getClass().getName() );
-                                    //double suma = ad.get(mes) ;
-                                    //Log.d(TAG,"xyz_QUE DISE??");
-                                    //ad.set(mes, suma);
-
                                 }
-                                /*
-                                    Log.d(TAG,"xyzSUMA: "+Double.toString(suma));
-                                    ad.set(mes, suma);
-                                */
+
                             }
-                            Log.d(TAG,"xyz_SALE DEL FOR");
+                            Log.d(TAG,"xyz_DONE!");
+                            Toast.makeText(getApplicationContext(),(String)"DONE", Toast.LENGTH_SHORT).show();
 
                         } else {
                             Log.d(TAG, "xyz No ENCUENTRA LA BBDD");
@@ -119,24 +107,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-
-            // ad.set(mes, ad.get(mes) + rains[0] );
-
-
-
             return null;
         }
     }
 
-    public void resetDB(View v){
-        ArrayList<Integer> aF= new ArrayList<>(Collections.nCopies(12, 0));
+    public void resetDB(){
+        ArrayList<Double> aF= new ArrayList<>(Collections.nCopies(12, 0.1));
         Map<String,Object> tempz = new HashMap<>();
         for (int i=0; i<13; i++) {
             tempz.put("E"+Integer.toString(i), aF);
 
         }
 
-        db.collection("Temperaturas").document("Estaciones").set(tempz)
+        db.collection("Lluvias").document("Estaciones").set(tempz)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
