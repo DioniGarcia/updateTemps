@@ -1,12 +1,11 @@
 package com.example.administrador.updatetemps;
 
 import android.os.AsyncTask;
+import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -55,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
             final Double [] rains = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
             Map<String,Object> tempz = new HashMap<>();
 
-            Log.d(TAG, "xyz_FECHA: " + "MES: "+mes+" DIA: "+dia);
-
             if (mes==11 && dia==31){
                 resetDB();
             }
@@ -88,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     ad.set(mes,ad.get(mes)+rains[i]);
 
-                                    db.collection("Temperaturas").document("Estaciones")
+                                    db.collection("Lluvias").document("Estaciones")
                                             .update(
                                                     "E"+Integer.toString(i), ad
                                             );
@@ -97,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                             Log.d(TAG,"xyz_DONE!");
                             Toast.makeText(getApplicationContext(),(String)"DONE", Toast.LENGTH_SHORT).show();
+
 
                         } else {
                             Log.d(TAG, "xyz No ENCUENTRA LA BBDD");
@@ -109,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
 
             return null;
         }
+
+
     }
 
     public void resetDB(){
@@ -182,8 +182,8 @@ public class MainActivity extends AppCompatActivity {
             webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c04m001e02").get();
             rains[2] = formatTemps(webPage.getElementById("prec").text());
 
-            webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c02m129e02").get();
-            rains[3] = formatTemps(webPage.getElementById("prec").text());
+            webPage = Jsoup.connect("http://www.aemet.es/es/eltiempo/observacion/ultimosdatos?k=val&l=8489X&w=1&datos=img").get();
+            rains[3] = formatTemps(webPage.getElementsByClass("fila_impar").get(4).text());
 
             webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c99m044e15").get();
             rains[4] = formatTemps(webPage.getElementById("prec").text());
