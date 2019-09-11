@@ -1,7 +1,6 @@
 package com.example.administrador.updatetemps;
 
 import android.os.AsyncTask;
-import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -60,12 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
             fillVectRains(rains);
 
-            /* BORRAR */
-
             Log.d(TAG, "RAINS : "+Arrays.toString(rains));
-
-            /**********/
-
 
             DocumentReference docRef = db.collection("Lluvias").document("Estaciones");
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -143,8 +137,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static Double formatTemps(String orgData){
+    public static Double formatRains(String orgData){
         Double result;
+
+        // Coger el índice sobre el primer caracter que sea un valor numérico
         int idx = 0;
         for (int i=0;i<orgData.length();i++){
             if (Character.isDigit(orgData.charAt(i))) {
@@ -152,25 +148,14 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
         }
-        // Contemplar temperaturas negativas
-        if (idx != 0 && orgData.charAt(idx-1) == '-'){
-            //Log.d(TAG,"xyZNEGA: "+orgData.substring(idx-1,orgData.length()-2));
 
-            try{
-                result = Double.parseDouble(orgData.substring(idx-1,orgData.length()-2).replace(',','.'));
-            }catch( NumberFormatException e){
-                //Log.d("xyz_TRY/CATCH_NEGA: "+TAG, orgData.substring(idx-1,orgData.length()-2).replace(',','.') );
-                return 0.0;
-            }
-            return result;
-        }
-
-        //TEMPERATURAS POSITIVAS
-        //Log.d("xyZPOSI: "+TAG,orgData.substring(idx,orgData.length()-2));
         try{
-            result = Double.parseDouble(orgData.substring(idx,orgData.length()-2).replace(',','.'));
+            orgData=orgData.replace(',','.');
+            int pointIdx = orgData.indexOf('.');
+            orgData=orgData.substring(idx,pointIdx+2);
+            result = Double.parseDouble(orgData);
+
         }catch( NumberFormatException e){
-            //Log.d("xyz_TRY/CATCH_POSI: "+TAG, orgData.substring(idx,orgData.length()-2).replace(',','.') );
             return 0.0;
         }
         return result;
@@ -181,43 +166,43 @@ public class MainActivity extends AppCompatActivity {
             Document webPage;
 
             webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c04m139e01").get();
-            rains[0] = formatTemps(webPage.getElementById("prec").text());
+            rains[0] = formatRains(webPage.getElementById("prec").text());
 
             webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c04m055e02").get();
-            rains[1] = formatTemps(webPage.getElementById("prec").text());
+            rains[1] = formatRains(webPage.getElementById("prec").text());
 
             webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c04m001e02").get();
-            rains[2] = formatTemps(webPage.getElementById("prec").text());
+            rains[2] = formatRains(webPage.getElementById("prec").text());
 
             webPage = Jsoup.connect("http://www.aemet.es/es/eltiempo/observacion/ultimosdatos?k=val&l=8489X&w=1&datos=img").get();
-            rains[3] = formatTemps(webPage.getElementsByClass("fila_impar").get(4).text());
+            rains[3] = formatRains(webPage.getElementsByClass("fila_impar").get(4).text());
 
             webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c99m044e15").get();
-            rains[4] = formatTemps(webPage.getElementById("prec").text());
+            rains[4] = formatRains(webPage.getElementById("prec").text());
 
             webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c08m131e01").get();
-            rains[5] = formatTemps(webPage.getElementById("prec").text());
+            rains[5] = formatRains(webPage.getElementById("prec").text());
 
             webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c06m084e02").get();
-            rains[6] = formatTemps(webPage.getElementById("prec").text());
+            rains[6] = formatRains(webPage.getElementById("prec").text());
 
             webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c99m044e01").get();
-            rains[7] = formatTemps(webPage.getElementById("prec").text());
+            rains[7] = formatRains(webPage.getElementById("prec").text());
 
             webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c07m115e01").get();
-            rains[8] = formatTemps(webPage.getElementById("prec").text());
+            rains[8] = formatRains(webPage.getElementById("prec").text());
 
             webPage = Jsoup.connect("https://www.avamet.org/mxo_i.php?id=c09m201e01").get();
-            rains[9] = formatTemps(webPage.getElementById("prec").text());
+            rains[9] = formatRains(webPage.getElementById("prec").text());
 
             webPage = Jsoup.connect("http://www.aemet.es/es/eltiempo/observacion/ultimosdatos?k=arn&l=8486X&w=1&datos=img").get();
-            rains[10] = formatTemps(webPage.getElementsByClass("fila_impar").get(4).text());
+            rains[10] = formatRains(webPage.getElementsByClass("fila_impar").get(4).text());
 
             webPage = Jsoup.connect("http://www.aemet.es/es/eltiempo/observacion/ultimosdatos?k=val&l=8472A&w=1&datos=img&f=tmax").get();
-            rains[11] = formatTemps( webPage.getElementsByClass("fila_impar").get(4).text());
+            rains[11] = formatRains( webPage.getElementsByClass("fila_impar").get(4).text());
 
             webPage = Jsoup.connect("https://meteosabi.es/el-tiempo-en-bronchales-teruel").get();
-            rains[12] = formatTemps(webPage.getElementById("RainToday").text());
+            rains[12] = formatRains(webPage.getElementById("RainToday").text());
 
 
 
