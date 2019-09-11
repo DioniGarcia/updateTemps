@@ -60,6 +60,13 @@ public class MainActivity extends AppCompatActivity {
 
             fillVectRains(rains);
 
+            /* BORRAR */
+
+            Log.d(TAG, "RAINS : "+Arrays.toString(rains));
+
+            /**********/
+
+
             DocumentReference docRef = db.collection("Lluvias").document("Estaciones");
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
@@ -93,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
                             }
                             Log.d(TAG,"xyz_DONE!");
-                            Toast.makeText(getApplicationContext(),(String)"DONE", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(),(String)"DONE", Toast.LENGTH_LONG).show();
 
 
                         } else {
@@ -211,6 +218,7 @@ public class MainActivity extends AppCompatActivity {
 
             webPage = Jsoup.connect("https://meteosabi.es/el-tiempo-en-bronchales-teruel").get();
             rains[12] = formatTemps(webPage.getElementById("RainToday").text());
+
 
 
         } catch (IOException e) {
