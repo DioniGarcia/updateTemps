@@ -145,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i=0;i<orgData.length();i++){
             if (Character.isDigit(orgData.charAt(i))) {
                 idx = i;
+                
                 break;
             }
         }
